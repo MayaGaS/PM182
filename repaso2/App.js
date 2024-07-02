@@ -1,49 +1,72 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, FlatList, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native';
 import React, { useState } from 'react';
 
 export default function App() {
   const [titulo, setTitulo] = useState('');
+  const [peliculas, setPeliculas] = useState([
+    { key: 1, titulo: 'Intensamente 2' },
+    { key: 2, titulo: 'Rapidos y Furiosos' },
+    { key: 3, titulo: 'Bad Boys' },
+    { key: 4, titulo: 'Diario de una Pasion' },
+    { key: 5, titulo: 'Avengers' },
+    { key: 6, titulo: 'Coraline y la Puerta Secreta' },
+    { key: 7, titulo: 'Parasitos' },
+  ]);
 
-  // Función que se ejecuta al presionar el botón de guardar
-  const guardar = () => {
-    Alert.alert(
-      'Sin resultados',
-      'Titulo:${titulo}',
-    );
-  };
-
-  return (
-    <ImageBackground source={require('./assets/1.jpg')} style={styles.background}>
-      <Text style={styles.titulo}> Buscador de Peliculas </Text>
-      <View style={styles.container}>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Titulo:</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder='Ingresa el Titulo de la Pelicula'
-            onChangeText={setTitulo}
-            value={titulo}
-          />
-
-          <Button style={styles.button} onPress={guardar} title='BUSCAR'></Button>
-
-        </View>
-      </View>
-      <FlatList
-        data={[{ key: 1, titulo: 'Intensamente 2' },
+  // Función que se ejecuta al presionar el botón de buscar
+  const buscar = () => {
+    if (titulo.trim() === '') {
+      // Mostrar toda la lista si no hay texto en el campo de búsqueda
+      setPeliculas([
+        { key: 1, titulo: 'Intensamente 2' },
         { key: 2, titulo: 'Rapidos y Furiosos' },
         { key: 3, titulo: 'Bad Boys' },
         { key: 4, titulo: 'Diario de una Pasion' },
         { key: 5, titulo: 'Avengers' },
         { key: 6, titulo: 'Coraline y la Puerta Secreta' },
         { key: 7, titulo: 'Parasitos' },
-        ]}
-        renderItem={({ item }) => <Text style={styles.item}> {item.titulo} </Text>} // Itera los datos que estan en la lista
-      />
+      ]);
+    } else {
+      // Filtrar películas según el título ingresado
+      const resultados = peliculas.filter(pelicula =>
+        pelicula.titulo.toLowerCase().includes(titulo.toLowerCase())
+      );
+      setPeliculas(resultados);
+      if (resultados.length === 0) {
+        Alert.alert('Sin Resultados', `No se encontraron películas con el título "${titulo}"`);
+      }
+    }
+  };
 
+  return (
+    <ImageBackground source={require('./assets/4.jpg')} style={styles.background}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.titulo}>Buscador de Películas</Text>
 
+        {/* Tarjeta de búsqueda */}
+        <View style={styles.card}>
+          <TextInput
+            style={styles.textInput}
+            placeholder='Ingresa el Título de la Película'
+            onChangeText={setTitulo}
+            value={titulo}
+          />
+          <TouchableOpacity style={styles.button} onPress={buscar}>
+            <Text style={styles.buttonText}>BUSCAR</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Tarjeta de resultados */}
+        <View style={styles.card}>
+          <View style={styles.listaContainer}>
+            {peliculas.map((pelicula, index) => (
+              <Text key={pelicula.key} style={styles.item}>{pelicula.titulo}</Text>
+            ))}
+          </View>
+        </View>
+
+      </ScrollView>
       <StatusBar style="auto" />
     </ImageBackground>
   );
@@ -53,14 +76,11 @@ export default function App() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  container: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
     padding: 20,
   },
   card: {
@@ -68,19 +88,22 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     padding: 20,
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Fondo semi-transparente
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginTop: 20, // Ajustar según sea necesario
+    marginBottom: 20,
   },
-  inputContainer: {
-    marginBottom: 15,
+  listaContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   label: {
     fontSize: 16,
-    color: 'white',
+    color: '#000',
     marginBottom: 5,
   },
   textInput: {
@@ -91,35 +114,34 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
+    marginBottom: 10,
   },
   button: {
-    flex: 1,
-    marginTop: 10,
     width: '100%',
     height: 45,
     backgroundColor: 'red',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
-    paddingHorizontal: 10,
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-
   titulo: {
-    alignItems: 'left',
     fontSize: 25,
     fontWeight: 'bold',
     color: 'white',
-    paddingTop: 90,
+    marginBottom: 20, // Ajustar según sea necesario
   },
   item: {
     padding: 10,
     borderColor: 'blue',
-    color: 'white',
-    fontSize: 25,
+    color: 'black',
+    fontSize: 20,
+    textAlign: 'center', // Centra el texto horizontalmente
+    fontWeight: 'bold'
   },
 });
