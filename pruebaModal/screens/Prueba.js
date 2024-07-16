@@ -1,71 +1,72 @@
-import { Entypo, FontAwesome5 } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { View, Text, Modal, Dimensions, TouchableOpacity } from "react-native";
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Modal, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
 
-const {width, height} = Dimensions.get('window');
+// son para implementar modales deslizantes 
+import { FontAwesome5 } from '@expo/vector-icons';
+import {
+    BottomSheetModalProvider,
+    BottomSheetModal
+} from "@gorhom/bottom-sheet";
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+
+const { width, height } = Dimensions.get("window") // se obtienen las dimensiones de la ventana actual
 
 export default function Prueba() {
+    const [modal, setModal] = useState(false); //estado modal y funcion modal para actualizar el estado
 
-    const [modal, setModal] = useState(false);
+    const sheetModal = useRef(null); // se declara una referencia
+
+    // se define la funcion 'hey'
+    const hey = () => {
+        sheetModal?.current?.present()
+    }
+
+    const snapPoints = [width*0.3, width*0.5, width*0.9] // se decalara snapPoints contine los puntos de quiebre 
 
     return (
-        <View 
-            style={{
-                flex: 1, 
-                justifyContent: 'center', 
-                alignItems: 'center'
-            }}
+        // comienzo del retorno del componente 'Prueba'
+        <GestureHandlerRootView style={{ flex: 1}}>
+        <BottomSheetModalProvider>
+
+            {/* se declara BottomSheetModal, se le asigna un nombre referenciado con sheetModal y con los puntos de quiebre */}
+            <BottomSheetModal
+            name="maya"
+            ref={sheetModal}
+            snapPoints={snapPoints}
         >
-            <Modal visible={modal} animationType="slide"> /* visible:manda llamar el modal  animationType: define si el modal viene de abajo o aparece*/
-                <View
-                    style={{
-                        flex:1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(0,0,0,0.3)'
-                    }}
-                >   
+            {/* dentro del BottomSheetModal se define un view que contiene un text con el contenido  */} 
+            <View
+            style={{
+                flex:1,
+                justifyContent: "center",
+                alignItems: "center"
+            }}>
+                <Text>Contenido del BottomSheet</Text>
+                
+            </View>
+        </BottomSheetModal>
 
-                    <TouchableOpacity onPress={() => setModal(false)}
-                        style={{
-                            width: width * 0.2,
-                            height: height * 0.2,
-                            justifyContent: 'center',
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#f4f4f4',
-                            borderRadius: width * 0.5,
-                            left: width * 0.5,
-                        }}
-                    >
-                        <FontAwesome5 name="chevron-circle-down" size={width * 0.1} color="#ff"/>
-                    </TouchableOpacity>
-
-                </View>
-            </Modal>
-
-            <TouchableOpacity onPress={() => setModal(true)}
+            {/* este view contiene un TouchableOpacity, donde manda llamar la funion 'hey' y muesta el BottomSheetModal */}
+            <View
+            style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
+                <TouchableOpacity onPress={() => hey()}
                 style={{
-                    width: width * 0.2,
-                    height: height * 0.1,
-                    backgroundColor: '#0088f0',
-                    borderRadius: width * 0.1,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
+                    width: width *0.3,
+                    height: height * 0.3,
+                    backgroundColor: "#ffff",
+                }}>
+                    <Text>Hola</Text>
+                </TouchableOpacity>
+            </View>
 
-                <Text
-                    style={{
-                        fontSize: width * 0.02,
-                        fontWeight: '700',
-                        color: '#fff'
-                    }}
-                >
-                    Abrir Modal
-                </Text>
-            
-            </TouchableOpacity>
-        </View>
+        </BottomSheetModalProvider>
+        </GestureHandlerRootView>
     );
 }
