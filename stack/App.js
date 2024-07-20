@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import * as React from 'react'; 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from 'react'; // se importan todas las exportaciones del módulo react
+import { NavigationContainer } from '@react-navigation/native'; // se importa el componente NavigationContainer (se usa para gestionar la navegación)
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; // se  importa la función createNativeStackNavigator (se usa para crear un "navegador de pila")
 
 // creacion de funcion 
 function homeScreen({navigation}){
